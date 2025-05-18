@@ -1,4 +1,4 @@
-name: Build test
+name: Build binutils
 
 on:
   workflow_dispatch:
@@ -19,24 +19,21 @@ jobs:
     - name: Install dependencies
       run: bash -e ci.sh deps
 
-    - name: Build LLVM
-      run: bash -e ci.sh llvm
-
     - name: Build binutils
       run: bash -e ci.sh binutils
 
     - name: Create ZIP archive
-      run: zip -r llvm-binutils.zip install/
+      run: zip -r binutils.zip install/
 
-    - name: Upload LLVM and binutils artifact
+    - name: Upload binutils artifact
       uses: actions/upload-artifact@v4
       with:
-        name: llvm-binutils
-        path: llvm-binutils.zip
+        name: binutils
+        path: binutils.zip
 
     - name: Create GitHub Release
       if: success()
       uses: softprops/action-gh-release@v2.3.2
       with:
-        files: llvm-binutils.zip
+        files: binutils.zip
         tag_name: ${{ github.ref_name }}
