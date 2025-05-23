@@ -1,4 +1,4 @@
-name: Build bin
+name: Build binutils
 
 on:
   workflow_dispatch:
