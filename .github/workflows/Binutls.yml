@@ -19,8 +19,13 @@ jobs:
     - name: Build binutils
       run: bash ci.sh binutils
 
-    - name: binutils
+    - name: Upload binutils
       uses: actions/upload-artifact@v4
       with:
         name: binutils
         path: install/
+
+    - name: GH Release
+      uses: softprops/action-gh-release@v2.3.2
+      with:
+        files: install/**
