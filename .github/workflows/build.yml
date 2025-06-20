@@ -3,6 +3,9 @@ name: Build test
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build-test:
     runs-on: ubuntu-latest
@@ -14,16 +17,26 @@ jobs:
       run: chmod +x ci.sh
 
     - name: Install dependencies
-      run: bash ci.sh deps
+      run: bash -e ci.sh deps
 
     - name: Build LLVM
-      run: bash ci.sh llvm
+      run: bash -e ci.sh llvm
 
     - name: Build binutils
-      run: bash ci.sh binutils
+      run: bash -e ci.sh binutils
 
-    - name: Upload LLVM and binutils
+    - name: Create ZIP archive
+      run: zip -r llvm-binutils.zip install/
+
+    - name: Upload LLVM and binutils artifact
       uses: actions/upload-artifact@v4
       with:
         name: llvm-binutils
-        path: install/
+        path: llvm-binutils.zip
+
+    - name: Create GitHub Release
+      if: success()
+      uses: softprops/action-gh-release@v2.3.2
+      with:
+        files: llvm-binutils.zip
+        tag_name: ${{ github.ref_name }}
