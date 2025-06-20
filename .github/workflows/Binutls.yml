@@ -17,19 +17,23 @@ jobs:
       run: chmod +x ci.sh
 
     - name: Install dependencies
-      run: bash ci.sh deps
+      run: bash -e ci.sh deps
 
     - name: Build binutils
-      run: bash ci.sh binutils
+      run: bash -e ci.sh binutils
 
-    - name: Upload binutils
+    - name: Create ZIP archive
+      run: zip -r binutils.zip install/
+
+    - name: Upload binutils artifact
       uses: actions/upload-artifact@v4
       with:
         name: binutils
-        path: install/
+        path: binutils.zip
 
-    - name: GH Release
+    - name: Create GitHub Release
+      if: success()
       uses: softprops/action-gh-release@v2.3.2
       with:
-        files: install/**
+        files: binutils.zip
         tag_name: ${{ github.ref_name }}
